@@ -4,7 +4,7 @@ root = Path(__file__).resolve().parent
 repo = root.parent
 out = repo / 'dist' / 'desktop-installer'
 out.mkdir(parents=True, exist_ok=True)
-module = repo / 'dist/GammaOS-RGDS-Performance-HUD-v1.0.11.zip'
+module = repo / 'dist/GammaOS-RGDS-Performance-HUD-v1.0.12.zip'
 original_binary = repo/'fixes/xmb-bottom-clock/gammaos-nano.original'
 assert hashlib.sha256(original_binary.read_bytes()).hexdigest() == '5dda3100f902dce69f7912814b4c1086b597a8006fc3251a7d7c74b3132bb4c2', 'Original menu version mismatch'
 clock_binary = repo / 'fixes/xmb-bottom-clock/gammaos-nano.patched'
@@ -22,9 +22,10 @@ with zipfile.ZipFile(clock_module, 'w', zipfile.ZIP_DEFLATED) as z:
     z.writestr('customize.sh', 'SKIPUNZIP=0\ncurrent=$(sha256sum /system/bin/gammaos-nano | cut -d " " -f 1)\ncase "$current" in 5dda3100f902dce69f7912814b4c1086b597a8006fc3251a7d7c74b3132bb4c2|1c6064b64180352e65da92659fbe6f3fa9e149f74e1477f8011e124ad9d01a10|eb56f122f19dfb64c1af441b1ee609de2336a00334dc547fb8e9d4af1c5b7a4c) ;; *) abort "Unsupported gammaos-nano version";; esac\nset_perm "$MODPATH/system/bin/gammaos-nano" 0 2000 0755 u:object_r:bootanim_exec:s0\n')
 clock_digest = hashlib.sha256(clock_module.read_bytes()).hexdigest()
 digest = hashlib.sha256(module.read_bytes()).hexdigest()
-readme = '''GammaOS RG DS 性能面板安装器 1.0.20
+readme = '''GammaOS RG DS 性能面板安装器 1.0.21
 
-适用：RG DS / GammaOS 内置 Nano NDS；设备须已有 Root 和 Magisk。
+内置性能面板 1.0.12、时钟补丁 1.0.2。
+适用：RG DS / GammaOS Core 1.4.1 / 1.4.4 内置 Nano NDS；设备须已有 Root 和 Magisk。
 不会解锁、刷系统、安装 Root，也不适用于其他掌机。
 
 1. 完整解压到电脑。Windows 双击“打开安装器.cmd”；Mac 打开“Gamma 面板安装器.app”。
@@ -39,7 +40,7 @@ Mac：仅在作者使用的 M1 Mac mini 测试；Intel 版本仅编译通过。�
 等待开机超时不代表安装失败：确认掌机开机后点击“验证状态”。
 卸载：连接掌机，点击“移除面板”。立即停止面板和后台监听，清理本工具的模块、待生效升级、旧启动脚本和运行数据；无需重启。不会卸载 Magisk 或其他模块。
 
-测试仅覆盖上述两台电脑，不承诺其他电脑或系统兼容。本次免责声明更新在 Mac 重新编译检查，未在 Windows 再次实机复测。
+测试仅覆盖上述两台电脑，不承诺其他电脑或系统兼容。本次 1.4.4 兼容更新在 Mac 重新编译检查，未在 Windows 再次实机复测。1.4.4 已实机验证面板启动、显示与 FPS；用户已在 1.4.1 实机使用新版安装工具测试，确认面板可正常打开。
 ADB 来自 Google 官方 Platform-Tools，随包保留 NOTICE 和版本信息。
 源码：https://android.googlesource.com/platform/packages/modules/adb/
 '''
@@ -73,17 +74,19 @@ contents=app/'Contents'; exe=contents/'MacOS'; res=contents/'Resources'
 exe.mkdir(parents=True);res.mkdir();common(res)
 subprocess.run(['lipo','-create','/tmp/gamma-installer-arm','/tmp/gamma-installer-intel','-output',str(exe/'GammaInstaller')],check=True)
 with (contents/'Info.plist').open('wb') as f:
-    plistlib.dump(dict(CFBundleExecutable='GammaInstaller',CFBundleIdentifier='cn.rongjun.gamma-hud-installer',CFBundleName='Gamma 面板安装器',CFBundlePackageType='APPL',CFBundleShortVersionString='1.0.20',LSMinimumSystemVersion='12.0',NSHighResolutionCapable=True),f)
+    plistlib.dump(dict(CFBundleExecutable='GammaInstaller',CFBundleIdentifier='cn.rongjun.gamma-hud-installer',CFBundleName='Gamma 面板安装器',CFBundlePackageType='APPL',CFBundleShortVersionString='1.0.21',LSMinimumSystemVersion='12.0',NSHighResolutionCapable=True),f)
 for name in ['adb','NOTICE.txt','source.properties']:
     shutil.copy2(root/'vendor/mac/platform-tools'/name,res/name)
 subprocess.run(['codesign','--force','--deep','--sign','-',str(app)],check=True)
 (mac/'使用说明.txt').write_text(readme)
 for folder in [win,mac]:
-    dest=out/(folder.name+'-v1.0.20.zip')
+    dest=out/(folder.name+'-v1.0.21.zip')
     if folder == mac:
         subprocess.run(['ditto','-c','-k','--sequesterRsrc','--keepParent',str(folder),str(dest)],check=True)
     else:
         with zipfile.ZipFile(dest,'w',zipfile.ZIP_DEFLATED) as z:
             for p in sorted(folder.rglob('*')):
                 if p.is_file():z.write(p,p.relative_to(out))
+    archive_digest = hashlib.sha256(dest.read_bytes()).hexdigest()
+    dest.with_suffix('.zip.sha256').write_text(archive_digest+'  '+dest.name+'\n')
     print(dest)

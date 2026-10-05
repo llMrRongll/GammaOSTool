@@ -66,7 +66,7 @@ function Write-Log([string]$s) {
  if($script:logFile){try{[IO.File]::AppendAllText($script:logFile,('['+(Get-Date -Format o)+'] '+$s+"`r`n"),[Text.UTF8Encoding]::new($true))}catch{}}
 }
 function Set-Status([string]$s) { Write-Log $s;$status.Text = $s; [Windows.Forms.Application]::DoEvents() }
-Write-Log ('Installer 1.0.20 | OS '+[Environment]::OSVersion.VersionString+' | PowerShell '+$PSVersionTable.PSVersion+' | Process64 '+[Environment]::Is64BitProcess+' | OS64 '+[Environment]::Is64BitOperatingSystem)
+Write-Log ('Installer 1.0.21 | OS '+[Environment]::OSVersion.VersionString+' | PowerShell '+$PSVersionTable.PSVersion+' | Process64 '+[Environment]::Is64BitProcess+' | OS64 '+[Environment]::Is64BitOperatingSystem)
 Write-Log ('ADB path: '+(Join-Path $root 'adb.exe')+' | ADB_USB_LEGACY='+$env:ADB_USB_LEGACY+' | ADB_LIBUSB='+$env:ADB_LIBUSB)
 $export=New-Object Windows.Forms.Button;$export.Text='导出日志';$export.SetBounds(710,620,122,26)
 $export.FlatStyle='Flat';$export.ForeColor=[Drawing.Color]::White;$export.BackColor=[Drawing.ColorTranslator]::FromHtml('#263145')

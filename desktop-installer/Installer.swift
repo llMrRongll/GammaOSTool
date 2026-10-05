@@ -9,7 +9,7 @@ final class SessionLog {
         try? FileManager.default.createDirectory(at:base,withIntermediateDirectories:true)
         url=base.appendingPathComponent("installer-\(Int(Date().timeIntervalSince1970))-\(UUID().uuidString.prefix(8)).log")
         FileManager.default.createFile(atPath:url.path,contents:nil)
-        write("Installer 1.0.20 | macOS \(ProcessInfo.processInfo.operatingSystemVersionString)")
+        write("Installer 1.0.21 | macOS \(ProcessInfo.processInfo.operatingSystemVersionString)")
     }
     func write(_ value:String){
         lock.lock();defer{lock.unlock()}
