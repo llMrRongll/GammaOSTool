@@ -4,7 +4,7 @@ GammaOSTool 是个人维护的非官方开源工具，免费提供，由作者�
 
 软件、安装包、补丁和说明均按现状提供，不保证兼容性、稳定性、准确性、持续更新或适用于任何特定用途。在适用法律允许的范围内，作者及贡献者不对使用或无法使用本工具造成的设备异常、数据或存档丢失、系统无法启动及其他直接或间接损失承担责任。本声明不排除适用法律规定不能排除的责任；具体许可条款见 LICENSE。
 
-目前电脑端只在作者使用的 M1 Mac mini 和一台 Windows 10 电脑上测试过。这不代表所有同类电脑、Windows 11、Intel Mac、其他 macOS 版本或其他掌机均兼容。当前掌机适配范围为 RG DS、GammaOS Core 1.4.1、已具备 Root/Magisk 的内置 Nano NDS 环境。
+目前电脑端只在作者使用的 M1 Mac mini 和一台 Windows 10 电脑上测试过。这不代表所有同类电脑、Windows 11、Intel Mac、其他 macOS 版本或其他掌机均兼容。当前掌机适配范围为 RG DS、GammaOS Core 1.4.1 / 1.4.4、已具备 Root/Magisk 的内置 Nano NDS 环境。
 
 使用前请自行阅读安装与卸载方法、核对适用设备和版本、备份重要数据与游戏存档，并保存当前游戏进度。Root 权限和显示补丁可能影响设备运行；不了解这些操作时请不要安装。主菜单时钟补丁仅支持校验通过的程序版本，系统更新前应先移除该补丁。
 
@@ -15,7 +15,7 @@ GammaOSTool 是个人维护的非官方开源工具，免费提供，由作者�
 
 ## 安装器
 
-从官方仓库 Releases 下载 Gamma-HUD-macOS-v1.0.20.zip 或 Gamma-HUD-Windows-v1.0.20.zip，完整解压。Mac 打开“Gamma 面板安装器.app”，Windows 双击“打开安装器.cmd”。压缩包内同时提供 SHA256 校验文件。
+使用 Gamma-HUD-macOS-v1.0.21.zip 或 Gamma-HUD-Windows-v1.0.21.zip，完整解压。发布后的安装包可从官方仓库 Releases 下载。Mac 打开“Gamma 面板安装器.app”，Windows 双击“打开安装器.cmd”。压缩包内同时提供 SHA256 校验文件。
 
 掌机须已具备 Root/Magisk，启用 USB 调试并允许电脑授权，Root 提示允许 Shell。建议先回到主菜单、保存游戏进度，再执行安装或移除。
 
@@ -25,7 +25,7 @@ GammaOSTool 是个人维护的非官方开源工具，免费提供，由作者�
 
 ## Magisk 手动安装
 
-已了解 Magisk 操作的用户可安装独立 GammaOS-RGDS-Performance-HUD-v1.0.11.zip。通过 Magisk 的模块页从本地安装后重启，再进入游戏按 BTN_MODE。手动 ZIP 与桌面安装器的立即加载流程不同。
+已了解 Magisk 操作的用户可安装独立 GammaOS-RGDS-Performance-HUD-v1.0.12.zip。通过 Magisk 的模块页从本地安装后重启，再进入游戏按 BTN_MODE。手动 ZIP 与桌面安装器的立即加载流程不同。
 
 ## 时钟补丁
 
@@ -40,3 +40,5 @@ GammaOSTool 是个人维护的非官方开源工具，免费提供，由作者�
 ## FPS 的含义
 
 显示下屏 DRM 翻帧完成频率，按约一秒窗口计数。重复显示相同画面仍计数，不是模拟核心运行速度。当前依赖 RG DS / Nano 的 DRM 路径；来源不明确或采样不可用显示 N/A，首次显示需等待完整采样窗口。
+
+面板 1.0.12 按驱动名称识别下屏图层，同时支持 1.4.1 的 Smart 和 1.4.4 的 Cluster 游戏显示。1.4.4 已实机验证启动、显示与 FPS；用户已在 1.4.1 实机使用新版安装工具测试，确认面板可正常打开。电脑端本次重新编译 Mac，Windows 包已更新但未再次实机验证。
