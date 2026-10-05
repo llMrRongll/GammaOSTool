@@ -1,0 +1,14 @@
+--- a/frameworks/base/cmds/gammaos-nano/NanoMenuPS3Clock.cpp
++++ b/frameworks/base/cmds/gammaos-nano/NanoMenuPS3Clock.cpp
+@@ -1445,7 +1445,10 @@
+     // Centred disc geometry (drawPspClock scale rule: ox+240*sc2 == W/2, oy+136*sc2 == H/2), with the
+     // buoyant easeOutBack drop-in during the reveal. floatY = 0 (no idle bob on the static panel).
+     const float W = (float)mWidth, H = (float)mHeight;
+-    const float sc2 = std::min(H / 272.0f, W / 288.0f);
++    // The glass disc has diameter 282 PSP units, larger than the 272-unit
++    // canvas height. Fit the entire disc tangent to the shorter panel edges.
++    // The face and date derive their scale from mPspLensR, so they stay aligned.
++    const float sc2 = std::min(H / 282.0f, W / 282.0f);
+     const float ox  = (W - 480.0f * sc2) * 0.5f, oy = (H - 272.0f * sc2) * 0.5f;
+     const float floatY = 0.0f;
+     float descentPx;

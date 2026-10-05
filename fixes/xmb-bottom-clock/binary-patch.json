@@ -1,0 +1,7 @@
+{
+  "original_sha256": "5dda3100f902dce69f7912814b4c1086b597a8006fc3251a7d7c74b3132bb4c2",
+  "patched_sha256": "1c6064b64180352e65da92659fbe6f3fa9e149f74e1477f8011e124ad9d01a10",
+  "instruction_offset": "0x24f1bc",
+  "constant_offset": "0x34d398",
+  "description": "Redirect only secondary clock scale load to dedicated constants in loaded .text alignment padding; shared constants untouched."
+}
