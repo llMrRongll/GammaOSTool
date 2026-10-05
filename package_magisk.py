@@ -3,7 +3,7 @@ from pathlib import Path
 import zipfile, hashlib
 
 root = Path(__file__).resolve().parent
-output = root / "dist" / "GammaOS-RGDS-Performance-HUD-v1.0.11.zip"
+output = root / "dist" / "GammaOS-RGDS-Performance-HUD-v1.0.12.zip"
 output.parent.mkdir(exist_ok=True)
 with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
     for path in sorted((root / "magisk-module").rglob("*")):

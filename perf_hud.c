@@ -135,6 +135,21 @@ static long long millis(void) {
     struct timespec t;clock_gettime(CLOCK_MONOTONIC,&t);return (long long)t.tv_sec*1000+t.tv_nsec/1000000;
 }
 #include "hud_fps.h"
+/* Object IDs can change with kernel updates. Resolve only the known RG DS
+ * lower display and overlay by driver names; never pick an arbitrary plane. */
+static int lower_display(uint32_t *plane,uint32_t *crtc) {
+    FILE *f=fopen("/sys/kernel/debug/dri/0/state","r");if(!f)return -1;
+    char line[256],name[64];unsigned id;int planes=0,crtcs=0;
+    while(fgets(line,sizeof(line),f)) {
+        if(sscanf(line,"plane[%u]: %63s",&id,name)==2&&!strcmp(name,"Esmart0-win0")) {
+            *plane=id;planes++;
+        }
+        if(sscanf(line,"crtc[%u]: %63s",&id,name)==2&&!strcmp(name,"video_port0")) {
+            *crtc=id;crtcs++;
+        }
+    }
+    fclose(f);return planes==1&&crtcs==1?0:-1;
+}
 static int commit(int fd, uint32_t plane, uint32_t *props, uint64_t *values, uint32_t n, uint32_t flags) {
     struct drm_mode_atomic a = { .flags=flags, .count_objs=1,
         .objs_ptr=(uintptr_t)&plane, .count_props_ptr=(uintptr_t)&n,
@@ -179,7 +194,8 @@ int main(int argc,char **argv) {
     int game_pid=atoi(argv[1]);if(game_pid<=0||!game_alive(game_pid)){fprintf(stderr,"Nano game not running\n");return 1;}
     int lockfd=open("/data/local/tmp/gamma-perf-hud.lock",O_RDWR|O_CREAT|O_CLOEXEC,0600);
     if(lockfd<0||flock(lockfd,LOCK_EX|LOCK_NB)){fprintf(stderr,"HUD already running or lock unavailable\n");return 1;}
-    const uint32_t plane=266, crtc=74, width=HUD_WIDTH, height=HUD_HEIGHT;
+    uint32_t plane=0,crtc=0;
+    const uint32_t width=HUD_WIDTH, height=HUD_HEIGHT;
     int result=1, attached=0, fade_in=0;
     struct hud_fps fps={.fd=-1,.value=-1};int fps_attempted=0;
 #ifdef HUD_TOUCH_TEST
@@ -199,6 +215,15 @@ int main(int argc,char **argv) {
     signal(SIGUSR2,touch_changed);
     struct drm_set_client_cap cap={DRM_CLIENT_CAP_ATOMIC,1};
     if(ioctl(fd,DRM_IOCTL_SET_CLIENT_CAP,&cap)) goto done;
+    if(lower_display(&plane,&crtc)) {
+        fprintf(stderr,"RG DS lower display not found\n");goto done;
+    }
+    printf("Lower display: Esmart0-win0 plane=%u video_port0 CRTC=%u\n",plane,crtc);fflush(stdout);
+    struct drm_mode_crtc screen={.crtc_id=crtc};
+    if(ioctl(fd,DRM_IOCTL_MODE_GETCRTC,&screen)||!screen.mode_valid||
+       screen.mode.hdisplay!=width||screen.mode.vdisplay!=height) {
+        fprintf(stderr,"lower display mode unavailable\n");goto done;
+    }
     struct drm_mode_get_plane p={.plane_id=plane};
     if(ioctl(fd,DRM_IOCTL_MODE_GETPLANE,&p)||p.crtc_id||p.fb_id||!(p.possible_crtcs&1)) {
         fprintf(stderr,"target plane unavailable\n");goto done;

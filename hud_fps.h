@@ -66,15 +66,18 @@ static void fps_line(struct hud_fps *f,const char *line) {
 }
 static int fps_game_plane(void) {
     FILE *in=fopen("/sys/kernel/debug/dri/0/state","r");if(!in)return 0;
-    char line[256];int primary=0,owned=0;
+    char line[256],name[64];unsigned id;int primary=0,owned=0,lower=0;
     while(fgets(line,sizeof(line),in)) {
         if(!strncmp(line,"plane[",6)) {
-            if(primary)break;
-            primary=!strncmp(line,"plane[58]:",10);
+            if(primary&&owned&&lower)break;
+            primary=sscanf(line,"plane[%u]: %63s",&id,name)==2&&
+                (!strcmp(name,"Smart0-win0")||!strcmp(name,"Cluster0-win0"));
+            owned=lower=0;
         }
+        if(primary&&strstr(line,"crtc=video_port0"))lower=1;
         if(primary&&strstr(line,"allocated by = drastic-nano"))owned=1;
     }
-    fclose(in);return owned;
+    fclose(in);return primary&&owned&&lower;
 }
 static void fps_poll(struct hud_fps *f) {
     if(f->fd<0)return;
