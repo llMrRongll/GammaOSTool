@@ -1,0 +1,13 @@
+tools/
+dist/
+desktop-installer/vendor/
+__pycache__/
+*.pyc
+.DS_Store
+perf_hud
+perf_watch
+preview_hud
+.zig-cache/
+zig-out/
+fixes/xmb-bottom-clock/gammaos-nano.original
+fixes/xmb-bottom-clock/gammaos-nano.patched
