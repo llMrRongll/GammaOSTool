@@ -1,0 +1,6 @@
+id=gamma_perf_hud
+name=GammaOS RG DS 性能面板
+version=1.0.11
+versionCode=10011
+author=rongjun
+description=RG DS / GammaOS Core 1.4.1 内置 Nano NDS：全屏温度、频率、电池功率、内存面板。默认隐藏，BTN_MODE 开关。
